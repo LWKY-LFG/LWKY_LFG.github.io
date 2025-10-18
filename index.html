@@ -299,5 +299,64 @@
     // Ensure a default section visible
     document.querySelector('main section.active') || document.querySelector('main section')?.classList.add('active');
   </script>
+  <canvas id="snowCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById('snowCanvas');
+const ctx = canvas.getContext('2d');
+let snowflakes = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function createSnowflake() {
+  const x = Math.random() * canvas.width;
+  const y = Math.random() * -50;
+  const radius = Math.random() * 2 + 1;
+  const speed = Math.random() * 1 + 0.5;
+  const opacity = Math.random() * 0.7 + 0.3;
+  snowflakes.push({ x, y, radius, speed, opacity });
+}
+
+function drawSnowflakes() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let flake of snowflakes) {
+    ctx.beginPath();
+    ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0, 200, 255, ${flake.opacity})`; // blue glow
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = 'rgba(0, 200, 255, 0.8)';
+    ctx.fill();
+    flake.y += flake.speed;
+    if (flake.y > canvas.height) {
+      flake.y = -flake.radius;
+      flake.x = Math.random() * canvas.width;
+    }
+  }
+}
+
+function updateSnowfall() {
+  if (snowflakes.length < 120) createSnowflake();
+  drawSnowflakes();
+  requestAnimationFrame(updateSnowfall);
+}
+updateSnowfall();
+
+// Style the canvas
+canvas.style.position = 'fixed';
+canvas.style.top = 0;
+canvas.style.left = 0;
+canvas.style.width = '100%';
+canvas.style.height = '100%';
+canvas.style.zIndex = '10';
+canvas.style.pointerEvents = 'none';
+</script>
+
 </body>
 </html>
+
